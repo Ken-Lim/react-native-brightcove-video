@@ -19,16 +19,16 @@ public class ReactExoplayerViewManager extends ViewGroupManager<ReactExoplayerVi
 
     private static final String REACT_CLASS = "RCTVideo";
 
+    private static final String PROP_VIDEO = "video";
+    private static final String PROP_VIDEO_ACCOUNT_ID = "accountId";
+    private static final String PROP_VIDEO_POLICY = "policy";
+    private static final String PROP_VIDEO_VIDEO_ID = "videoId";
     private static final String PROP_SRC = "src";
     private static final String PROP_SRC_URI = "uri";
     private static final String PROP_SRC_TYPE = "type";
     private static final String PROP_RESIZE_MODE = "resizeMode";
-    private static final String PROP_REPEAT = "repeat";
     private static final String PROP_PAUSED = "paused";
-    private static final String PROP_MUTED = "muted";
-    private static final String PROP_VOLUME = "volume";
     private static final String PROP_SEEK = "seek";
-    private static final String PROP_RATE = "rate";
     private static final String PROP_PLAY_IN_BACKGROUND = "playInBackground";
     private static final String PROP_DISABLE_FOCUS = "disableFocus";
 
@@ -66,8 +66,17 @@ public class ReactExoplayerViewManager extends ViewGroupManager<ReactExoplayerVi
         );
     }
 
+    @ReactProp(name = PROP_VIDEO)
+    public void setVideoId(final ReactExoplayerView videoView, @Nullable ReadableMap video) {
+        videoView.setVideo(
+                video.getString(PROP_VIDEO_ACCOUNT_ID),
+                video.getString(PROP_VIDEO_POLICY),
+                video.getString(PROP_VIDEO_VIDEO_ID));
+    }
+
     @ReactProp(name = PROP_SRC)
     public void setSrc(final ReactExoplayerView videoView, @Nullable ReadableMap src) {
+/*
         Context context = videoView.getContext().getApplicationContext();
         String uriString = src.hasKey(PROP_SRC_URI) ? src.getString(PROP_SRC_URI) : null;
         String extension = src.hasKey(PROP_SRC_TYPE) ? src.getString(PROP_SRC_TYPE) : null;
@@ -102,16 +111,12 @@ public class ReactExoplayerViewManager extends ViewGroupManager<ReactExoplayerVi
                 }
             }
         }
+*/		
     }
 
     @ReactProp(name = PROP_RESIZE_MODE)
     public void setResizeMode(final ReactExoplayerView videoView, final String resizeModeOrdinalString) {
-        videoView.setResizeModeModifier(convertToIntDef(resizeModeOrdinalString));
-    }
-
-    @ReactProp(name = PROP_REPEAT, defaultBoolean = false)
-    public void setRepeat(final ReactExoplayerView videoView, final boolean repeat) {
-        videoView.setRepeatModifier(repeat);
+//        videoView.setResizeModeModifier(convertToIntDef(resizeModeOrdinalString));
     }
 
     @ReactProp(name = PROP_PAUSED, defaultBoolean = false)
@@ -119,24 +124,9 @@ public class ReactExoplayerViewManager extends ViewGroupManager<ReactExoplayerVi
         videoView.setPausedModifier(paused);
     }
 
-    @ReactProp(name = PROP_MUTED, defaultBoolean = false)
-    public void setMuted(final ReactExoplayerView videoView, final boolean muted) {
-        videoView.setMutedModifier(muted);
-    }
-
-    @ReactProp(name = PROP_VOLUME, defaultFloat = 1.0f)
-    public void setVolume(final ReactExoplayerView videoView, final float volume) {
-        videoView.setVolumeModifier(volume);
-    }
-
     @ReactProp(name = PROP_SEEK)
     public void setSeek(final ReactExoplayerView videoView, final float seek) {
         videoView.seekTo(Math.round(seek * 1000f));
-    }
-
-    @ReactProp(name = PROP_RATE)
-    public void setRate(final ReactExoplayerView videoView, final float rate) {
-        videoView.setRateModifier(rate);
     }
 
     @ReactProp(name = PROP_PLAY_IN_BACKGROUND, defaultBoolean = false)
@@ -147,14 +137,6 @@ public class ReactExoplayerViewManager extends ViewGroupManager<ReactExoplayerVi
     @ReactProp(name = PROP_DISABLE_FOCUS, defaultBoolean = false)
     public void setDisableFocus(final ReactExoplayerView videoView, final boolean disableFocus) {
         videoView.setDisableFocus(disableFocus);
-    }
-
-    private boolean startsWithValidScheme(String uriString) {
-        return uriString.startsWith("http://")
-                || uriString.startsWith("https://")
-                || uriString.startsWith("content://")
-                || uriString.startsWith("file://")
-                || uriString.startsWith("asset://");
     }
 
     private @ResizeMode.Mode int convertToIntDef(String resizeModeOrdinalString) {
