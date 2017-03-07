@@ -5,14 +5,18 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 
 import com.brentvatne.react.R;
 import com.brentvatne.receiver.AudioBecomingNoisyReceiver;
 import com.brentvatne.receiver.BecomingNoisyListener;
+import com.brightcove.player.edge.Catalog;
+import com.brightcove.player.edge.VideoListener;
+import com.brightcove.player.model.Video;
+import com.brightcove.player.view.BrightcoveExoPlayerVideoView;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.google.android.exoplayer2.C;
@@ -51,7 +55,7 @@ import java.net.CookiePolicy;
 @SuppressLint("ViewConstructor")
 class ReactExoplayerView extends FrameLayout implements
         LifecycleEventListener,
-        ExoPlayer.EventListener,
+//        ExoPlayer.EventListener,
         BecomingNoisyListener,
         AudioManager.OnAudioFocusChangeListener {
 
@@ -70,7 +74,9 @@ class ReactExoplayerView extends FrameLayout implements
 
     private Handler mainHandler;
     private Timeline.Window window;
-    private ExoPlayerView exoPlayerView;
+//    private ExoPlayerView exoPlayerView;
+    private BrightcoveExoPlayerVideoView brightcoveExoPlayerVideoView;
+    private Catalog catalog = null;
 
     private DataSource.Factory mediaDataSourceFactory;
     private SimpleExoPlayer player;
@@ -85,6 +91,11 @@ class ReactExoplayerView extends FrameLayout implements
     private boolean isBuffering;
     private boolean isTimelineStatic;
 
+    private boolean isCatalogCreated = false;
+    private String mAccountId;
+    private String mPolicy;
+    private String mVideoId;
+
     // Props from React
     private Uri srcUri;
     private String extension;
@@ -97,6 +108,7 @@ class ReactExoplayerView extends FrameLayout implements
     private final AudioManager audioManager;
     private final AudioBecomingNoisyReceiver audioBecomingNoisyReceiver;
 
+/*
     private final Handler progressHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -115,17 +127,17 @@ class ReactExoplayerView extends FrameLayout implements
             }
         }
     };
+*/
 
     public ReactExoplayerView(ThemedReactContext context) {
         super(context);
-        createViews();
         this.eventEmitter = new VideoEventEmitter(context);
         this.themedReactContext = context;
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         themedReactContext.addLifecycleEventListener(this);
         audioBecomingNoisyReceiver = new AudioBecomingNoisyReceiver(themedReactContext);
+        createViews();
     }
-
 
     @Override
     public void setId(int id) {
@@ -143,11 +155,12 @@ class ReactExoplayerView extends FrameLayout implements
 
         LayoutParams layoutParams = new LayoutParams(
                 LayoutParams.MATCH_PARENT,
-                LayoutParams.MATCH_PARENT);
-        exoPlayerView = new ExoPlayerView(getContext());
-        exoPlayerView.setLayoutParams(layoutParams);
+                getVideoHeight());
 
-        addView(exoPlayerView, 0, layoutParams);
+        Log.d(TAG, "----> createViews()");
+        brightcoveExoPlayerVideoView = (BrightcoveExoPlayerVideoView)LayoutInflater.from(this.themedReactContext).inflate(R.layout.brightcove_video, null);
+        brightcoveExoPlayerVideoView.setLayoutParams(layoutParams);
+        addView(brightcoveExoPlayerVideoView, 0, layoutParams);
     }
 
     @Override
@@ -187,6 +200,41 @@ class ReactExoplayerView extends FrameLayout implements
     // Internal methods
 
     private void initializePlayer() {
+        Log.d(TAG, "----> initializePlayer");
+
+        if (!isCatalogCreated) {
+            Log.d(TAG, "----> create Catalog");
+            catalog = new Catalog(
+                    brightcoveExoPlayerVideoView.getEventEmitter(),
+                    mAccountId,
+                    mPolicy
+            );
+            Log.d(TAG, "catalog: "+catalog);
+            isCatalogCreated = true;
+            playerNeedsSource = true;
+        }
+
+        if (playerNeedsSource && mVideoId != null) {
+            playerNeedsSource = false;
+            Log.d(TAG, "----> findVideoByID");
+            catalog.findVideoByID(mVideoId,
+                    new VideoListener() {
+                        @Override
+                        public void onVideo(Video video) {
+                            Log.d(TAG, "----> onVideo: " + video);
+                            brightcoveExoPlayerVideoView.add(video);
+                            brightcoveExoPlayerVideoView.start();
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            super.onError(error);
+                            Log.d(TAG, "----> onError() in findVideoByID(): " + error);
+                        }
+                    });
+        }
+
+/*
         if (player == null) {
             TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveVideoTrackSelection.Factory(BANDWIDTH_METER);
             trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
@@ -213,6 +261,7 @@ class ReactExoplayerView extends FrameLayout implements
             eventEmitter.loadStart();
             loadVideoStarted = true;
         }
+*/
     }
 
     private MediaSource buildMediaSource(Uri uri, String overrideExtension) {
@@ -237,6 +286,7 @@ class ReactExoplayerView extends FrameLayout implements
     }
 
     private void releasePlayer() {
+/*
         if (player != null) {
             isPaused = player.getPlayWhenReady();
             shouldRestorePosition = false;
@@ -253,6 +303,7 @@ class ReactExoplayerView extends FrameLayout implements
         progressHandler.removeMessages(SHOW_PROGRESS);
         themedReactContext.removeLifecycleEventListener(this);
         audioBecomingNoisyReceiver.removeListener();
+*/
     }
 
     private boolean requestAudioFocus() {
@@ -368,6 +419,7 @@ class ReactExoplayerView extends FrameLayout implements
         eventEmitter.audioBecomingNoisy();
     }
 
+/*
     // ExoPlayer.EventListener implementation
 
     @Override
@@ -404,33 +456,6 @@ class ReactExoplayerView extends FrameLayout implements
                 break;
         }
         Log.d(TAG, text);
-    }
-
-    private void startProgressHandler() {
-        progressHandler.sendEmptyMessage(SHOW_PROGRESS);
-    }
-
-    private void videoLoaded() {
-        if (loadVideoStarted) {
-            loadVideoStarted = false;
-            Format videoFormat = player.getVideoFormat();
-            int width = videoFormat != null ? videoFormat.width : 0;
-            int height = videoFormat != null ? videoFormat.height : 0;
-            eventEmitter.load(player.getDuration(), player.getCurrentPosition(), width, height);
-        }
-    }
-
-    private void onBuffering(boolean buffering) {
-        if (isBuffering == buffering) {
-            return;
-        }
-
-        isBuffering = buffering;
-        if (buffering) {
-            eventEmitter.buffering(true);
-        } else {
-            eventEmitter.buffering(false);
-        }
     }
 
     @Override
@@ -480,7 +505,41 @@ class ReactExoplayerView extends FrameLayout implements
         playerNeedsSource = true;
     }
 
+    private void startProgressHandler() {
+        progressHandler.sendEmptyMessage(SHOW_PROGRESS);
+    }
+*/
+
+    private void videoLoaded() {
+        if (loadVideoStarted) {
+            loadVideoStarted = false;
+            Format videoFormat = player.getVideoFormat();
+            int width = videoFormat != null ? videoFormat.width : 0;
+            int height = videoFormat != null ? videoFormat.height : 0;
+            eventEmitter.load(player.getDuration(), player.getCurrentPosition(), width, height);
+        }
+    }
+
+    private void onBuffering(boolean buffering) {
+        if (isBuffering == buffering) {
+            return;
+        }
+
+        isBuffering = buffering;
+        if (buffering) {
+            eventEmitter.buffering(true);
+        } else {
+            eventEmitter.buffering(false);
+        }
+    }
+
     // ReactExoplayerViewManager public api
+
+    public void setVideo(String accountId, String policy, String videoId) {
+        mAccountId = accountId;
+        mPolicy = policy;
+        mVideoId = videoId;
+    }
 
     public void setSrc(final Uri uri, final String extension) {
         if (uri != null) {
@@ -499,7 +558,7 @@ class ReactExoplayerView extends FrameLayout implements
     }
 
     public void setResizeModeModifier(@ResizeMode.Mode int resizeMode) {
-        exoPlayerView.setResizeMode(resizeMode);
+//        exoPlayerView.setResizeMode(resizeMode);
     }
 
     public void setRepeatModifier(boolean repeat) {
@@ -549,5 +608,10 @@ class ReactExoplayerView extends FrameLayout implements
 
     public void setDisableFocus(boolean disableFocus) {
         this.disableFocus = disableFocus;
+    }
+
+    private int getVideoHeight() {
+        int width = themedReactContext.getResources().getDisplayMetrics().widthPixels;
+        return (int)(width / 1.78);
     }
 }
