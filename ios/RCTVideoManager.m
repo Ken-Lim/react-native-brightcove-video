@@ -1,7 +1,10 @@
 #import "RCTVideoManager.h"
 #import "RCTVideo.h"
 #import <React/RCTBridge.h>
-#import <AVFoundation/AVFoundation.h>
+
+@import GoogleInteractiveMediaAds;
+@import BrightcovePlayerSDK;
+@import BrightcoveIMA;
 
 @implementation RCTVideoManager
 
@@ -19,6 +22,15 @@ RCT_EXPORT_MODULE();
     return dispatch_get_main_queue();
 }
 
+#pragma mark Brightcove Props
+RCT_EXPORT_VIEW_PROPERTY(videoId, NSString);
+RCT_EXPORT_VIEW_PROPERTY(policyKey, NSString);
+RCT_EXPORT_VIEW_PROPERTY(accountId, NSString);
+RCT_EXPORT_VIEW_PROPERTY(play, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(autoPlay, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(autoAdvance, BOOL);
+
+#pragma mark React Native Video Props
 RCT_EXPORT_VIEW_PROPERTY(src, NSDictionary);
 RCT_EXPORT_VIEW_PROPERTY(resizeMode, NSString);
 RCT_EXPORT_VIEW_PROPERTY(repeat, BOOL);
