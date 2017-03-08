@@ -238,6 +238,16 @@ export default class Video extends Component {
 
 Video.propTypes = {
   /* Native only */
+  
+  video: PropTypes.object,
+  /* Example of video prop
+  video={{
+    accountId: 'xxx',
+    policy: 'yyy',
+    videoId: 'zzz',
+  }}
+  */
+
   src: PropTypes.object,
   seek: PropTypes.number,
   fullscreen: PropTypes.bool,
