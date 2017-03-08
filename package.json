@@ -1,5 +1,5 @@
 {
-  "name": "react-native-video",
+  "name": "@exponent/react-native-brightcove-video",
   "version": "1.0.0",
   "description": "A <Video /> element for react-native",
   "main": "Video.js",
@@ -17,7 +17,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:brentvatne/react-native-video.git"
+    "url": "git@github.com:JohnClema/react-native-brightcove-video.git"
   },
   "devDependencies": {
     "jest-cli": "0.2.1",

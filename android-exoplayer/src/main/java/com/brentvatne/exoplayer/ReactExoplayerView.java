@@ -5,9 +5,9 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import com.brentvatne.react.R;
@@ -17,7 +17,6 @@ import com.brightcove.player.edge.Catalog;
 import com.brightcove.player.edge.VideoListener;
 import com.brightcove.player.model.Video;
 import com.brightcove.player.view.BrightcoveExoPlayerVideoView;
-import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -54,7 +53,7 @@ import java.net.CookiePolicy;
 
 @SuppressLint("ViewConstructor")
 class ReactExoplayerView extends FrameLayout implements
-        LifecycleEventListener,
+//        LifecycleEventListener,
 //        ExoPlayer.EventListener,
         BecomingNoisyListener,
         AudioManager.OnAudioFocusChangeListener {
@@ -134,7 +133,7 @@ class ReactExoplayerView extends FrameLayout implements
         this.eventEmitter = new VideoEventEmitter(context);
         this.themedReactContext = context;
         audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        themedReactContext.addLifecycleEventListener(this);
+//        themedReactContext.addLifecycleEventListener(this);
         audioBecomingNoisyReceiver = new AudioBecomingNoisyReceiver(themedReactContext);
         createViews();
     }
@@ -155,12 +154,17 @@ class ReactExoplayerView extends FrameLayout implements
 
         LayoutParams layoutParams = new LayoutParams(
                 LayoutParams.MATCH_PARENT,
-                getVideoHeight());
+                LayoutParams.MATCH_PARENT);
 
         Log.d(TAG, "----> createViews()");
-        brightcoveExoPlayerVideoView = (BrightcoveExoPlayerVideoView)LayoutInflater.from(this.themedReactContext).inflate(R.layout.brightcove_video, null);
-        brightcoveExoPlayerVideoView.setLayoutParams(layoutParams);
-        addView(brightcoveExoPlayerVideoView, 0, layoutParams);
+
+        View videoContainer = LayoutInflater.from(themedReactContext.getCurrentActivity()).inflate(
+                R.layout.brightcove_video,
+                null
+        );
+
+        brightcoveExoPlayerVideoView = (BrightcoveExoPlayerVideoView)videoContainer.findViewById(R.id.brightcove_video_view);
+        addView(videoContainer, 0, layoutParams);
     }
 
     @Override
@@ -176,22 +180,25 @@ class ReactExoplayerView extends FrameLayout implements
     }
 
     // LifecycleEventListener implementation
-
+/*
     @Override
     public void onHostResume() {
+        Log.e(TAG, "onHostResume()");
         startPlayback();
     }
 
     @Override
     public void onHostPause() {
+        Log.e(TAG, "onHostPause()");
         setPlayWhenReady(false);
     }
 
     @Override
     public void onHostDestroy() {
+        Log.e(TAG, "onHostDestroy()");
         stopPlayback();
     }
-
+*/
     public void cleanUpResources() {
         stopPlayback();
     }
@@ -229,7 +236,7 @@ class ReactExoplayerView extends FrameLayout implements
                         @Override
                         public void onError(String error) {
                             super.onError(error);
-                            Log.d(TAG, "----> onError() in findVideoByID(): " + error);
+                            Log.d(TAG, "----> findVideoByID failed: " + error);
                         }
                     });
         }
@@ -262,27 +269,6 @@ class ReactExoplayerView extends FrameLayout implements
             loadVideoStarted = true;
         }
 */
-    }
-
-    private MediaSource buildMediaSource(Uri uri, String overrideExtension) {
-        int type = Util.inferContentType(!TextUtils.isEmpty(overrideExtension) ? "." + overrideExtension
-                : uri.getLastPathSegment());
-        switch (type) {
-            case C.TYPE_SS:
-                return new SsMediaSource(uri, buildDataSourceFactory(false),
-                        new DefaultSsChunkSource.Factory(mediaDataSourceFactory), mainHandler, null);
-            case C.TYPE_DASH:
-                return new DashMediaSource(uri, buildDataSourceFactory(false),
-                        new DefaultDashChunkSource.Factory(mediaDataSourceFactory), mainHandler, null);
-            case C.TYPE_HLS:
-                return new HlsMediaSource(uri, mediaDataSourceFactory, mainHandler, null);
-            case C.TYPE_OTHER:
-                return new ExtractorMediaSource(uri, mediaDataSourceFactory, new DefaultExtractorsFactory(),
-                        mainHandler, null);
-            default: {
-                throw new IllegalStateException("Unsupported type: " + type);
-            }
-        }
     }
 
     private void releasePlayer() {
@@ -582,7 +568,6 @@ class ReactExoplayerView extends FrameLayout implements
         }
     }
 
-
     public void setVolumeModifier(float volume) {
         if (player != null) {
             player.setVolume(volume);
@@ -601,17 +586,11 @@ class ReactExoplayerView extends FrameLayout implements
         // https://github.com/google/ExoPlayer/issues/26
     }
 
-
     public void setPlayInBackground(boolean playInBackground) {
         // TODO: implement
     }
 
     public void setDisableFocus(boolean disableFocus) {
         this.disableFocus = disableFocus;
-    }
-
-    private int getVideoHeight() {
-        int width = themedReactContext.getResources().getDisplayMetrics().widthPixels;
-        return (int)(width / 1.78);
     }
 }
