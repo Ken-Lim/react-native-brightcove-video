@@ -34,6 +34,8 @@
 		31CAFB301CAE6B5F009BCF6F /* RCTVideoPlayerViewControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTVideoPlayerViewControllerDelegate.h; sourceTree = "<group>"; };
 		72AF8C061E70DCDB00F9AE4D /* RCTBrightcoveVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTBrightcoveVideo.h; sourceTree = "<group>"; };
 		72AF8C071E70DCDB00F9AE4D /* RCTBrightcoveVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTBrightcoveVideo.m; sourceTree = "<group>"; };
+		72AF8CAF1E70FA3000F9AE4D /* BrightcovePlayerSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BrightcovePlayerSDK.framework; path = "../../../ios/Pods/Brightcove-Player-SDK/ios/static/BrightcovePlayerSDK.framework"; sourceTree = "<group>"; };
+		72AF8CB11E70FA3800F9AE4D /* BrightcoveIMA.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BrightcoveIMA.framework; path = "../../../ios/Pods/Brightcove-Player-SDK-IMA/ios/BrightcoveIMA.framework"; sourceTree = "<group>"; };
 		BBD49E3B1AC8DEF000610F8E /* RCTBrightcoveVideoManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTBrightcoveVideoManager.h; sourceTree = "<group>"; };
 		BBD49E3C1AC8DEF000610F8E /* RCTBrightcoveVideoManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTBrightcoveVideoManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -70,7 +72,17 @@
 				31CAFB1F1CADA8CD009BCF6F /* UIView+FindUIViewController.h */,
 				31CAFB201CADA8CD009BCF6F /* UIView+FindUIViewController.m */,
 				134814211AA4EA7D00B7C361 /* Products */,
+				72AF8CAE1E70FA3000F9AE4D /* Frameworks */,
 			);
+			sourceTree = "<group>";
+		};
+		72AF8CAE1E70FA3000F9AE4D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				72AF8CB11E70FA3800F9AE4D /* BrightcoveIMA.framework */,
+				72AF8CAF1E70FA3000F9AE4D /* BrightcovePlayerSDK.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -159,6 +171,16 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../../ios/Pods/Headers/Public/Brightcove-Player-SDK",
+					"$(SRCROOT)/../../../ios/Pods/Brightcove-Player-SDK",
+					"$(SRCROOT)/../../../ios/Brightcove-Player-SDK",
+					"$(SRCROOT)/../../../ios/Pods/Brightcove-Player-SDK-IMA",
+					"$(SRCROOT)/../../../ios/Brightcove-Player-SDK-IMA",
+					"$(SRCROOT)/../../../ios/Pods/Headers/Public/Brightcove-Player-SDK-IMA",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -173,6 +195,16 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../../ios/Pods/Headers/Public/Brightcove-Player-SDK",
+					"$(SRCROOT)/../../../ios/Pods/Brightcove-Player-SDK",
+					"$(SRCROOT)/../../../ios/Brightcove-Player-SDK",
+					"$(SRCROOT)/../../../ios/Pods/Brightcove-Player-SDK-IMA",
+					"$(SRCROOT)/../../../ios/Brightcove-Player-SDK-IMA",
+					"$(SRCROOT)/../../../ios/Pods/Headers/Public/Brightcove-Player-SDK-IMA",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -200,6 +232,16 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../../ios/Pods/Headers/Public/Brightcove-Player-SDK",
+					"$(SRCROOT)/../../../ios/Pods/Brightcove-Player-SDK",
+					"$(SRCROOT)/../../../ios/Brightcove-Player-SDK",
+					"$(SRCROOT)/../../../ios/Pods/Brightcove-Player-SDK-IMA",
+					"$(SRCROOT)/../../../ios/Brightcove-Player-SDK-IMA",
+					"$(SRCROOT)/../../../ios/Pods/Headers/Public/Brightcove-Player-SDK-IMA",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -207,6 +249,16 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../../ios/Pods/Headers/Public/Brightcove-Player-SDK",
+					"$(SRCROOT)/../../../ios/Pods/Brightcove-Player-SDK",
+					"$(SRCROOT)/../../../ios/Brightcove-Player-SDK",
+					"$(SRCROOT)/../../../ios/Pods/Brightcove-Player-SDK-IMA",
+					"$(SRCROOT)/../../../ios/Brightcove-Player-SDK-IMA",
+					"$(SRCROOT)/../../../ios/Pods/Headers/Public/Brightcove-Player-SDK-IMA",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
@@ -217,6 +269,16 @@
 		58B511F01A9E6C8500147676 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(SRCROOT)/../../../ios/Pods/Headers/Public/Brightcove-Player-SDK",
+					"$(SRCROOT)/../../../ios/Pods/Brightcove-Player-SDK",
+					"$(SRCROOT)/../../../ios/Brightcove-Player-SDK",
+					"$(SRCROOT)/../../../ios/Pods/Brightcove-Player-SDK-IMA",
+					"$(SRCROOT)/../../../ios/Brightcove-Player-SDK-IMA",
+					"$(SRCROOT)/../../../ios/Pods/Headers/Public/Brightcove-Player-SDK-IMA",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -231,6 +293,16 @@
 		58B511F11A9E6C8500147676 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(SRCROOT)/../../../ios/Pods/Headers/Public/Brightcove-Player-SDK",
+					"$(SRCROOT)/../../../ios/Pods/Brightcove-Player-SDK",
+					"$(SRCROOT)/../../../ios/Brightcove-Player-SDK",
+					"$(SRCROOT)/../../../ios/Pods/Brightcove-Player-SDK-IMA",
+					"$(SRCROOT)/../../../ios/Brightcove-Player-SDK-IMA",
+					"$(SRCROOT)/../../../ios/Pods/Headers/Public/Brightcove-Player-SDK-IMA",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
