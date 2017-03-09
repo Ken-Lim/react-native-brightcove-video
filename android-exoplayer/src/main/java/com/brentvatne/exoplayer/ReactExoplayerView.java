@@ -15,6 +15,7 @@ import com.brentvatne.receiver.AudioBecomingNoisyReceiver;
 import com.brentvatne.receiver.BecomingNoisyListener;
 import com.brightcove.player.edge.Catalog;
 import com.brightcove.player.edge.VideoListener;
+import com.brightcove.player.mediacontroller.BrightcoveMediaController;
 import com.brightcove.player.model.Video;
 import com.brightcove.player.view.BrightcoveExoPlayerVideoView;
 import com.facebook.react.uimanager.ThemedReactContext;
@@ -165,6 +166,9 @@ class ReactExoplayerView extends FrameLayout implements
 
         brightcoveExoPlayerVideoView = (BrightcoveExoPlayerVideoView)videoContainer.findViewById(R.id.brightcove_video_view);
         addView(videoContainer, 0, layoutParams);
+
+        final BrightcoveMediaController mediaController = new BrightcoveMediaController(brightcoveExoPlayerVideoView);
+        brightcoveExoPlayerVideoView.setMediaController(mediaController);
     }
 
     @Override
@@ -318,37 +322,50 @@ class ReactExoplayerView extends FrameLayout implements
     }
 
     private void startPlayback() {
-        if (player != null) {
-            switch (player.getPlaybackState()) {
-                case ExoPlayer.STATE_IDLE:
-                case ExoPlayer.STATE_ENDED:
-                    initializePlayer();
-                    break;
-                case ExoPlayer.STATE_BUFFERING:
-                case ExoPlayer.STATE_READY:
-                    if (!player.getPlayWhenReady()) {
-                        setPlayWhenReady(true);
-                    }
-                    break;
-                default:
-                    break;
+        if (brightcoveExoPlayerVideoView != null) {
+            if (brightcoveExoPlayerVideoView.getCurrentVideo() != null) {
+                brightcoveExoPlayerVideoView.start();
             }
-
         } else {
             initializePlayer();
         }
-        if (!disableFocus) {
-            setKeepScreenOn(true);
-        }
+
+//        if (player != null) {
+//            switch (player.getPlaybackState()) {
+//                case ExoPlayer.STATE_IDLE:
+//                case ExoPlayer.STATE_ENDED:
+//                    initializePlayer();
+//                    break;
+//                case ExoPlayer.STATE_BUFFERING:
+//                case ExoPlayer.STATE_READY:
+//                    if (!player.getPlayWhenReady()) {
+//                        setPlayWhenReady(true);
+//                    }
+//                    break;
+//                default:
+//                    break;
+//            }
+//
+//        } else {
+//            initializePlayer();
+//        }
+//        if (!disableFocus) {
+//            setKeepScreenOn(true);
+//        }
     }
 
     private void pausePlayback() {
-        if (player != null) {
-            if (player.getPlayWhenReady()) {
-                setPlayWhenReady(false);
+        if (brightcoveExoPlayerVideoView != null) {
+            if (brightcoveExoPlayerVideoView.isPlaying()) {
+                brightcoveExoPlayerVideoView.pause();
             }
         }
-        setKeepScreenOn(false);
+//        if (player != null) {
+//            if (player.getPlayWhenReady()) {
+//                setPlayWhenReady(false);
+//            }
+//        }
+//        setKeepScreenOn(false);
     }
 
     private void stopPlayback() {
@@ -553,7 +570,7 @@ class ReactExoplayerView extends FrameLayout implements
 
     public void setPausedModifier(boolean paused) {
         isPaused = paused;
-        if (player != null) {
+        if (brightcoveExoPlayerVideoView != null) {
             if (!paused) {
                 startPlayback();
             } else {

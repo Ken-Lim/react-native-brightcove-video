@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 
 public class ReactExoplayerViewManager extends ViewGroupManager<ReactExoplayerView> {
 
-    private static final String REACT_CLASS = "RCTVideo";
+    private static final String REACT_CLASS = "RCTBrightcoveVideo";
 
     private static final String PROP_VIDEO = "video";
     private static final String PROP_VIDEO_ACCOUNT_ID = "accountId";
