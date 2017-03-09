@@ -1,6 +1,6 @@
 {
   "name": "react-native-brightcove-video",
-  "react-native-brightcove-video": "https://github.com/SoftwareMarbles/jugglingdb/tarball/master",
+  "version": "1.0.1",
   "description": "A Brightcove backed <Video /> element for react-native",
   "main": "BrightcoveVideo.js",
   "license": "MIT",
