@@ -1,18 +1,14 @@
 {
-  "name": "@exponent/react-native-brightcove-video",
+  "name": "react-native-brightcove-video",
   "version": "1.0.0",
-  "description": "A <Video /> element for react-native",
+  "description": "A Brightcove backed <Video /> element for react-native",
   "main": "Video.js",
   "license": "MIT",
-  "author": "Brent Vatne <brentvatne@gmail.com> (https://github.com/brentvatne)",
+  "author": "John Clema <john.clema@gmail.com> (https://github.com/JohnClema)",
   "contributors": [
     {
-      "name": "Johannes Lumpe",
-      "email": "johannes@lum.pe"
-    },
-    {
-      "name": "Baris Sencan",
-      "email": "baris.sncn@gmail.com"
+      "name": "Ken Lim",
+      "email": "https://github.com/Ken-Lim"
     }
   ],
   "repository": {

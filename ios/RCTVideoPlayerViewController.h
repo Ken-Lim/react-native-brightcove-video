@@ -7,7 +7,7 @@
 //
 
 #import <AVKit/AVKit.h>
-#import "RCTVideo.h"
+#import "RCTBrightcoveVideo.h"
 #import "RCTVideoPlayerViewControllerDelegate.h"
 
 @interface RCTVideoPlayerViewController : AVPlayerViewController

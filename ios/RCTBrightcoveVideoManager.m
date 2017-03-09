@@ -1,12 +1,12 @@
-#import "RCTVideoManager.h"
-#import "RCTVideo.h"
+#import "RCTBrightcoveVideoManager.h"
+#import "RCTBrightcoveVideo.h"
 #import <React/RCTBridge.h>
 
 @import GoogleInteractiveMediaAds;
 @import BrightcovePlayerSDK;
 @import BrightcoveIMA;
 
-@implementation RCTVideoManager
+@implementation RCTBrightcoveVideoManager
 
 RCT_EXPORT_MODULE();
 
@@ -14,7 +14,7 @@ RCT_EXPORT_MODULE();
 
 - (UIView *)view
 {
-  return [[RCTVideo alloc] initWithEventDispatcher:self.bridge.eventDispatcher];
+  return [[RCTBrightcoveVideo alloc] initWithEventDispatcher:self.bridge.eventDispatcher];
 }
 
 - (dispatch_queue_t)methodQueue
@@ -23,9 +23,7 @@ RCT_EXPORT_MODULE();
 }
 
 #pragma mark Brightcove Props
-RCT_EXPORT_VIEW_PROPERTY(videoId, NSString);
-RCT_EXPORT_VIEW_PROPERTY(policyKey, NSString);
-RCT_EXPORT_VIEW_PROPERTY(accountId, NSString);
+RCT_EXPORT_VIEW_PROPERTY(video, NSDictionary);
 RCT_EXPORT_VIEW_PROPERTY(play, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(autoPlay, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(autoAdvance, BOOL);

@@ -1,8 +1,12 @@
 #import <React/RCTConvert.h>
-#import "RCTVideo.h"
+#import "RCTBrightcoveVideo.h"
 #import <React/RCTBridgeModule.h>
 #import <React/RCTEventDispatcher.h>
 #import <React/UIView+React.h>
+
+@import GoogleInteractiveMediaAds;
+@import BrightcovePlayerSDK;
+@import BrightcoveIMA;
 
 static NSString *const statusKeyPath = @"status";
 static NSString *const playbackLikelyToKeepUpKeyPath = @"playbackLikelyToKeepUp";
@@ -10,18 +14,16 @@ static NSString *const playbackBufferEmptyKeyPath = @"playbackBufferEmpty";
 static NSString *const readyForDisplayKeyPath = @"readyForDisplay";
 static NSString *const playbackRate = @"rate";
 
-@interface RCTVideo () <BCOVPlaybackControllerDelegate, IMAWebOpenerDelegate>
+@interface RCTBrightcoveVideo () <BCOVPlaybackControllerDelegate, IMAWebOpenerDelegate>
     @property (nonatomic, strong) BCOVPlaybackService *playbackService;
     @property (nonatomic) RCTEventDispatcher *eventDispatcher;
     @property (nonatomic) id<BCOVPlaybackController> playbackController;
     @property (nonatomic) BCOVPUIPlayerView *playerView;
 @end
 
-@implementation RCTVideo
+@implementation RCTBrightcoveVideo
     {
-        NSString *_videoId;
-        NSString *_policyKey;
-        NSString *_accountId;
+        NSDictionary *_video;
         BOOL _play;
         BOOL _autoPlay;
         BOOL _autoAdvance;
@@ -66,8 +68,6 @@ static NSString *const playbackRate = @"rate";
     {
         if (self = [super init]) {
             self.eventDispatcher = eventDispatcher;
-            self.playbackService = [[BCOVPlaybackService alloc] initWithAccountId:_accountId
-                                                                        policyKey:_policyKey];
             BCOVPlayerSDKManager *manager = [BCOVPlayerSDKManager sharedManager];
             
             id<BCOVPlaybackController> playbackController =
@@ -146,28 +146,15 @@ static NSString *const playbackRate = @"rate";
 }
     
     
--(void)setVideoId:(NSString *)videoId {
-    _videoId = videoId;
+-(NSDictionary *)video {
+    return _video;
+}
+
+-(void)setVideo:(NSDictionary *)video {
+    _video = video;
     [self requestContentFromPlaybackService];
 }
-    
-    
--(NSString *)policyKey {
-    return _policyKey;
-}
-    
--(void)setPolicyKey:(NSString *)policyKey {
-    _policyKey = policyKey;
-}
-    
--(NSString *)accountId {
-    return _accountId;
-}
-    
--(void)setAccountId:(NSString *)accountId {
-    _accountId = accountId;
-}
-    
+
 - (void)setAutoAdvance:(BOOL)autoAdvance {
     self.playbackController.autoAdvance = autoAdvance;
 }
@@ -186,25 +173,47 @@ static NSString *const playbackRate = @"rate";
 }
 
 - (void)requestContentFromPlaybackService
-    {
-        if (!_videoId) {
-            RCTLogError(@"No videoId provided %@", _videoId);
-        } else {
-            [self.playbackService findVideoWithVideoID:_videoId parameters:nil completion:^(BCOVVideo *video, NSDictionary *jsonResponse, NSError *error) {
+{
+    NSString *videoId = [_video objectForKey:BCVideoId];
+    NSString *accountId = [_video objectForKey:BCAccountId];
+    NSString *policyKey = [_video objectForKey:BCPolicyKey];
+    RCTLog(@"%@ , %@, %@", videoId, accountId, policyKey);
+    RCTLog(@"%@", _video);
+    //  if (!_videoId || !_policyKey || !_accountId) {
+    ////    RCTLogError(@"No videId provided %@", _videoId);
+    //  } else {
+    //    RCTLog(@"%@ , %@, %@", _videoId, _policyKey, _accountId);
+    self.playbackService = [[BCOVPlaybackService alloc] initWithAccountId:accountId
+                                                                policyKey:policyKey];
+    [self.playbackService findVideoWithVideoID:videoId parameters:nil completion:^(BCOVVideo *video, NSDictionary *jsonResponse, NSError *error) {
+        
+        if (video)
+        {
+            BCOVPlaylist *playlist = [[BCOVPlaylist alloc] initWithVideo:video];
+            
+            BCOVPlaylist *updatedPlaylist = [playlist update:^(id<BCOVMutablePlaylist> mutablePlaylist) {
                 
-                if (video)
-                {
-                    BCOVPlaylist *playlist = [[BCOVPlaylist alloc] initWithVideo:video];
-                    [self.playerView.playbackController setVideos:playlist.videos];
-                }
-                else
-                {
-                    RCTLogError(@"Error finding video from service: %@", error);
-                }
+                //          NSMutableArray *updatedVideos = [NSMutableArray arrayWithCapacity:mutablePlaylist.videos.count];
+                
+                //          for (BCOVVideo *video in mutablePlaylist.videos)
+                //          {
+                //            [updatedVideos addObject:[RCTBrightcovePlayer updateVideoWithVMAPTag:video]];
+                //          }
+                //
+                //          mutablePlaylist.videos = updatedVideos;
                 
             }];
+            
+            [self.playerView.playbackController setVideos:updatedPlaylist.videos];
         }
-    }
+        else
+        {
+            RCTLogError(@"Error finding video from service: %@", error);
+        }
+        
+    }];
+    //  }
+}
     
 #pragma mark React Native Video Methods
 - (AVPlayerViewController*)createPlayerViewController:(AVPlayer*)player withPlayerItem:(AVPlayerItem*)playerItem {
@@ -873,30 +882,36 @@ static NSString *const playbackRate = @"rate";
 //            [CATransaction commit];
 //        }
 //    }
-    
+
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    self.playerView.frame = self.bounds;
+}
+
 #pragma mark - Lifecycle
     
-- (void)removeFromSuperview
-    {
-        [_player pause];
-        if (_playbackRateObserverRegistered) {
-            [_player removeObserver:self forKeyPath:playbackRate context:nil];
-            _playbackRateObserverRegistered = NO;
-        }
-        _player = nil;
-        
-        [self removePlayerLayer];
-        
-        [_playerViewController.view removeFromSuperview];
-        _playerViewController = nil;
-        
-        [self removePlayerTimeObserver];
-        [self removePlayerItemObservers];
-        
-        _eventDispatcher = nil;
-        [[NSNotificationCenter defaultCenter] removeObserver:self];
-        
-        [super removeFromSuperview];
-    }
-    
+//- (void)removeFromSuperview
+//    {
+//        [_player pause];
+//        if (_playbackRateObserverRegistered) {
+//            [_player removeObserver:self forKeyPath:playbackRate context:nil];
+//            _playbackRateObserverRegistered = NO;
+//        }
+//        _player = nil;
+//        
+//        [self removePlayerLayer];
+//        
+//        [_playerViewController.view removeFromSuperview];
+//        _playerViewController = nil;
+//        
+//        [self removePlayerTimeObserver];
+//        [self removePlayerItemObservers];
+//        
+//        _eventDispatcher = nil;
+//        [[NSNotificationCenter defaultCenter] removeObserver:self];
+//        
+//        [super removeFromSuperview];
+//    }
+
     @end

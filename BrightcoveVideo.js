@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class Video extends Component {
+export default class BrightcoveVideo extends Component {
 
   constructor(props) {
     super(props);
@@ -163,13 +163,13 @@ export default class Video extends Component {
 
     let nativeResizeMode;
     if (resizeMode === VideoResizeMode.stretch) {
-      nativeResizeMode = NativeModules.UIManager.RCTVideo.Constants.ScaleToFill;
+      nativeResizeMode = NativeModules.UIManager.RCTBrightcoveVideo.Constants.ScaleToFill;
     } else if (resizeMode === VideoResizeMode.contain) {
-      nativeResizeMode = NativeModules.UIManager.RCTVideo.Constants.ScaleAspectFit;
+      nativeResizeMode = NativeModules.UIManager.RCTBrightcoveVideo.Constants.ScaleAspectFit;
     } else if (resizeMode === VideoResizeMode.cover) {
-      nativeResizeMode = NativeModules.UIManager.RCTVideo.Constants.ScaleAspectFill;
+      nativeResizeMode = NativeModules.UIManager.RCTBrightcoveVideo.Constants.ScaleAspectFill;
     } else {
-      nativeResizeMode = NativeModules.UIManager.RCTVideo.Constants.ScaleNone;
+      nativeResizeMode = NativeModules.UIManager.RCTBrightcoveVideo.Constants.ScaleNone;
     }
 
     const nativeProps = Object.assign({}, this.props);
@@ -215,8 +215,9 @@ export default class Video extends Component {
 
       return (
         <View style={nativeProps.style}>
-          <RCTVideo
+          <RCTBrightcoveVideo
             ref={this._assignRoot}
+            video={this.props.video}
             {...nativeProps}
           />
           <Image
@@ -228,7 +229,7 @@ export default class Video extends Component {
     }
 
     return (
-      <RCTVideo
+      <RCTBrightcoveVideo
         ref={this._assignRoot}
         {...nativeProps}
       />
@@ -236,10 +237,14 @@ export default class Video extends Component {
   }
 }
 
-Video.propTypes = {
+BrightcoveVideo.propTypes = {
   /* Native only */
   
   video: PropTypes.object,
+  play: PropTypes.bool,
+  autoAdvance: PropTypes.bool,
+  autoPlay: PropTypes.bool,
+
   /* Example of video prop
   video={{
     accountId: 'xxx',
@@ -311,7 +316,7 @@ Video.propTypes = {
   ...View.propTypes,
 };
 
-const RCTVideo = requireNativeComponent('RCTVideo', Video, {
+const RCTBrightcoveVideo = requireNativeComponent('RCTBrightcoveVideo', BrightcoveVideo, {
   nativeOnly: {
     src: true,
     seek: true,
