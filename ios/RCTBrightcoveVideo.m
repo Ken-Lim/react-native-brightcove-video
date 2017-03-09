@@ -400,7 +400,7 @@ static NSString *const playbackRate = @"rate";
         
         const Float64 progressUpdateIntervalMS = _progressUpdateInterval / 1000;
         // @see endScrubbing in AVPlayerDemoPlaybackViewController.m of https://developer.apple.com/library/ios/samplecode/AVPlayerDemo/Introduction/Intro.html
-        __weak RCTVideo *weakSelf = self;
+        __weak RCTBrightcoveVideo *weakSelf = self;
         _timeObserver = [_player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(progressUpdateIntervalMS, NSEC_PER_SEC)
                                                               queue:NULL
                                                          usingBlock:^(CMTime time) { [weakSelf sendProgressUpdate]; }
