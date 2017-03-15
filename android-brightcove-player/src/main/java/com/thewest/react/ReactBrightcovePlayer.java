@@ -1,7 +1,6 @@
 package com.thewest.react;
 
 import android.content.Intent;
-import android.util.Log;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -30,11 +29,7 @@ public class ReactBrightcovePlayer extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-//    public void playVideo(String accountId, String policyKey, String videoId) {
     public void playVideo(@Nullable ReadableMap video) {
-        Log.e(TAG, "accountId: " + video.getString(PROP_ACCOUNT_ID));
-        Log.e(TAG, "policyKey: " + video.getString(PROP_POLICY_KEY));
-        Log.e(TAG, "videoId: " + video.getString(PROP_VIDEO_ID));
         Intent intent = new Intent(this.context, BrightcovePlayerActivity.class);
         intent.putExtra(PROP_ACCOUNT_ID, video.getString(PROP_ACCOUNT_ID));
         intent.putExtra(PROP_POLICY_KEY, video.getString(PROP_POLICY_KEY));
