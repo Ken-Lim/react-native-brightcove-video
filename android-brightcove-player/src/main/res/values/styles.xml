@@ -1,0 +1,23 @@
+<resources>
+
+    <style name="AppTheme" parent="android:Theme.NoTitleBar.Fullscreen">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="BrightcoveControlBar" parent="BrightcoveControlBarDefault">
+        <!-- You can override values as shown here. The commented variables have the default values
+             It's recommended to parent BrightcoveControlBarDefault -->
+        <item name="brightcove_full_screen">false</item>
+        <!--<item name="brightcove_live">false</item>-->
+        <!--<item name="brightcove_timeout">10000</item>-->
+        <!--<item name="brightcove_audio_tracks">true</item>-->
+        <!--<item name="brightcove_closed_captions">true</item>-->
+        <!--<item name="brightcove_play">true</item>-->
+        <!--<item name="brightcove_rewind">true</item>-->
+        <!--<item name="brightcove_fast_forward">false</item>-->
+        <!--<item name="brightcove_seekbar">true</item>-->
+        <!--<item name="brightcove_animation_style">fade</item>-->
+        <!--<item name="brightcove_marker_color">@color/bmc_seekbar_marker</item>-->
+    </style>
+
+</resources>
