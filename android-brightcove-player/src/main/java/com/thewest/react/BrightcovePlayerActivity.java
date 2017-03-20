@@ -52,6 +52,7 @@ public class BrightcovePlayerActivity extends BrightcovePlayer {
         brightcoveVideoView = (BrightcoveExoPlayerVideoView)findViewById(R.id.brightcove_video_view);
         videoPlayerContainer = findViewById(R.id.video_player_container_layout);
         final BrightcoveMediaController mediaController = new BrightcoveMediaController(brightcoveVideoView);
+        brightcoveVideoView.getStillView().setVisibility(View.INVISIBLE);
 
         ImageButton btnBack = (ImageButton)findViewById(R.id.btnBack);
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -69,6 +70,7 @@ public class BrightcovePlayerActivity extends BrightcovePlayer {
         catalog.findVideoByID(videoId, new VideoListener() {
             @Override
             public void onVideo(Video video) {
+                brightcoveVideoView.clear();
                 brightcoveVideoView.add(video);
                 brightcoveVideoView.start();
             }
